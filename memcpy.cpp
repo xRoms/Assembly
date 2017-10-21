@@ -6,11 +6,13 @@
 
 using namespace std;
 
-void copy_asm(char *dst, char const *src, size_t size)
+void copy_asm(void *dst_, void const *src_, size_t size)
 {
+    char* dst = static_cast<char*>(dst_);
+    const char* src = static_cast<char const*>(src_);
     const size_t ALIGN = 16;
 
-    for (; (size > 0) && (static_cast<size_t>(*dst) % ALIGN) != 0; size--) {
+    for (; (size > 0) && ((reinterpret_cast<size_t>(dst)) % ALIGN) != 0; size--) {
         *dst = *src;
         src++;
         dst++;
@@ -27,17 +29,14 @@ void copy_asm(char *dst, char const *src, size_t size)
         dst += ALIGN;
         src += ALIGN;
     }
+    
+    _mm_sfence();
 
     for (;size > 0; size--) {
         *dst = *src;
         src++;
         dst++;
     }
-    _mm_sfence();
-}
-
-void copy_asm(void* dst, void const* src, size_t size) {
-    copy_asm(static_cast<char*>(dst), static_cast<char const*>(src), size);
 }
 
 int main() {
