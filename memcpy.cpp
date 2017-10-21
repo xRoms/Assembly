@@ -44,9 +44,7 @@ int main() {
     srand(time(NULL));
     for (int t = 0; t < 10000; t++) {
             int n = rand() % 10000;
-            int a[n];
-            int b[n];
-            int c[n];
+            int a[n], b[n], c[n];
             for (int i = 0; i < n; i++) {
                 a[i] = rand();  
                 c[i] = a[i];

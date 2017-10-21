@@ -38,7 +38,6 @@ size_t count(const char* str, size_t size)
         if ((last != ' ') && (*str == ' ')) {
             result++;
         }
-        //cout << "last " << last << "  cur " << *str <<"\n";
         last = *str;
         str = str + 1;
     }
@@ -69,7 +68,6 @@ size_t count(const char* str, size_t size)
         }
         recount_flush(result, count);
     }
-    //cout << "after fast " << result << " size = " << size << "\n";
     last = *str;
     if (*str != ' ') {
         result--;
