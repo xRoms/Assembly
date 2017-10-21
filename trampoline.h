@@ -118,12 +118,8 @@ struct trampoline<T(Args ...)> {
 
         if (args<Args ...>::INT < REGS) {
             for (int i = args<Args ...>::INT - 1; i >= 0; i--) { push(point, shifts[i]); }
-            push(point, "\x48\xbf");
-            *(void **) point = func_obj;
-            point += BYTE;
-            push(point, "\x48\xb8");
-            *(void **) point = (void *) &do_call<F>;
-            point += BYTE;
+            push(point, "\x48\xbf", func_obj);
+            push(point, "\x48\xb8",(void *) &do_call<F>);
             push(point, "\xff\xe0");
         } else {
             int stack_size = BYTE * (args<Args ...>::INT - 5 + std::max(args<Args ...>::SSE - BYTE, 0));
