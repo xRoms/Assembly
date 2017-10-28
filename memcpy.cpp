@@ -22,7 +22,7 @@ void copy_asm(void *dst_, void const *src_, size_t size)
         __m128i tmp;
         __asm__ volatile (
             "movdqu\t     (%[aSRC]), %[aTMP]\n"
-            "movdqu\t      %[aTMP], (%[aDST])\n"
+            "movntdq\t      %[aTMP], (%[aDST])\n"
             : [aTMP] "=x"(tmp)
             : [aSRC] "r"(src), [aDST] "r"(dst)
             : "memory");
