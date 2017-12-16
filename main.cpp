@@ -27,11 +27,6 @@ int sum(int a, int b) {
 }
 
 void small_pointer_test() {
-    /*
-    int (*ftp)(int, int) = nullptr;
-    ftp = sum;
-    trampoline<int (int, int)> t(ftp);
-    assert(2 == t.get()(1 , 2));*/
     std::function<char*(int *)> fun = [](int *){ return std::make_shared<char>('a').get(); };
     trampoline<char*(int*)> t(fun);
     assert ('a' == *t.get()(nullptr));
@@ -56,11 +51,10 @@ void small_hard_test() {
         std::cout << "double test completed"  << std::endl;
     }
     {
-        trampoline <float (float, float, float, float, float, float, float, float, float, float)>
-        t([&] (float p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, float p8, float p9) { return p9 + p1 + p2 + p3 + p4 + p0 + p5 + p6 + p7 + p8; });
-        float res = 9.4;
-        //float qq = t.get()(1.0, 1.2, 1, 1, 1, 1.2, 1, 1, 1, 1);
-        assert (res == t.get()(1.0, 1.2, 1, 1, 1, 1.2, 1, 1, 1, 1));
+        trampoline <float (float, float, float, float, float)>
+        t([&] (float p0, float p1, float p2, float p3, float p4) { return p1 + p2 + p3 + p4 + p0; });
+        float res = 5.2;
+        assert (res == t.get()(1.0, 1.2, 1, 1, 1));
         
         std::cout << "float test completed"  << std::endl;
     }

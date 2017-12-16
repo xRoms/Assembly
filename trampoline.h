@@ -126,8 +126,7 @@ struct trampoline<T(Args ...)> {
             
             int stack_size = BYTE * (std::max(args<Args ...>::INT - 5, 0) + std::max(args<Args ...>::SSE - BYTE, 0));
 
-            //int stack_size = BYTE * (std::max(args<Args ...>::INT - 5, 0) + std::max(args<Args ...>::SSE - BYTE, 0));
-
+        
             /* move r11 [rsp] save top of stack address */
 
             push(point, "\x4c\x8b\x1c\x24");
