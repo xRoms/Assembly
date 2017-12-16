@@ -1,4 +1,4 @@
-#include <iostream>
+#include <iostream> 
 #include <cstdio>
 #include <vector>
 #include "trampoline.h"
@@ -22,8 +22,16 @@ void small_easy_test() {
 }
 
 
+int sum(int a, int b) {
+    return a + b;
+}
 
 void small_pointer_test() {
+    /*
+    int (*ftp)(int, int) = nullptr;
+    ftp = sum;
+    trampoline<int (int, int)> t(ftp);
+    assert(2 == t.get()(1 , 2));*/
     std::function<char*(int *)> fun = [](int *){ return std::make_shared<char>('a').get(); };
     trampoline<char*(int*)> t(fun);
     assert ('a' == *t.get()(nullptr));
@@ -48,10 +56,11 @@ void small_hard_test() {
         std::cout << "double test completed"  << std::endl;
     }
     {
-        trampoline <float (float, float, float, float, float)>
-        t([&] (float p0, float p1, float p2, float p3, float p4) { return p1 + p2 + p3 + p4 + p0; });
-        float res = 5.2;
-        assert (res == t.get()(1.0, 1.2, 1, 1, 1));
+        trampoline <float (float, float, float, float, float, float, float, float, float, float)>
+        t([&] (float p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, float p8, float p9) { return p9 + p1 + p2 + p3 + p4 + p0 + p5 + p6 + p7 + p8; });
+        float res = 9.4;
+        //float qq = t.get()(1.0, 1.2, 1, 1, 1, 1.2, 1, 1, 1, 1);
+        assert (res == t.get()(1.0, 1.2, 1, 1, 1, 1.2, 1, 1, 1, 1));
         
         std::cout << "float test completed"  << std::endl;
     }
@@ -151,16 +160,6 @@ void large_hard_test() {
         std::cout << "parms sequence test completed" << std::endl;
     }
     {
-        trampoline <int (double, int, float, int, int, double, double, float)>
-        t([&] (double p0, int p1, float p2, int p3, int p4, double p5, double p6, float p7)
-        { return p7;});
-        auto p = t.get();
-        p(2, 3, 4, 5, 6, 7, 8, 9);
-        assert(p(1, 2, 3, 4, 5, 6, 7, 8.8) == 8);
-        
-        std::cout << "return parm test completed" << std::endl;
-    }
-    {
         typedef std::string st;
         std::function<int(st *c1, st *c2, st *c3, st *c4, st * c5, st *c6, st &c7, st *c8, st &c9)>
         fun = [](st *c1, st *c2, st  *c3, st *c4, st * c5, st *c6, st &c7, st *c8, st &c9)
@@ -205,6 +204,31 @@ void methods_test () {
     std::cout << "Test 5 passed" << std::endl << std::endl;
 }
 
+void giga_hard_test() {
+
+    {
+        trampoline <int (float, float, float, float, float, float, float, float, float)>
+        t([&] (float p2, float p7, float p8, float p9, float p10, float p11, float p12, float p13, float p14)
+        { return p7;});
+        auto p = t.get();
+        //std::cout << p(6, 7.1, 8.8, 10, 8.8, 10, 8.8, 10, 8.8) << "\n";
+        assert(p(6, 7.1, 8.8, 10, 8.8, 10, 8.8, 10, 8.8) == 7);
+        
+        std::cout << "giga test 1 completed" << std::endl;
+    }
+
+
+    {
+        trampoline <float (float, float, float, float, float, float, float, float, float, int)>
+        t([&] (float p2, float p7, float p8, float p9, float p10, float p11, float p12, float p13, float p14, int i1)
+        { return p7;});
+        float res = 7.1;
+        assert(t.get()(6, 7.1, 8.8, 10, 8.8, 10, 8.8, 10, 8.8, 1) == res);
+        
+        std::cout << "giga test 2 completed" << std::endl;
+    }
+}
+
 int main()
 {
     small_easy_test();
@@ -213,6 +237,7 @@ int main()
     large_easy_test();
     large_hard_test();
     methods_test();
+    giga_hard_test();
     std::cout << std::endl << "All passed" << std::endl << std::endl;
     return 0;
 }

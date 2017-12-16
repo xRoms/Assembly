@@ -83,8 +83,9 @@ struct trampoline<T(Args ...)> {
     };
 
     void push(char *&p, const char *command) {
-        for (const char *i = command; *i; i++) {
-            *(p++) = *i;
+        for (const char *i = command; (*i != 0); i++) {
+            *p = *i;
+            p++;
         }
     }
 
@@ -116,13 +117,16 @@ struct trampoline<T(Args ...)> {
 
         char *point = (char *) code;
 
-        if (args<Args ...>::INT < REGS) {
+        if ((args<Args ...>::INT < REGS) && (args<Args ...>::SSE <= BYTE)) {
             for (int i = args<Args ...>::INT - 1; i >= 0; i--) { push(point, shifts[i]); }
             push(point, "\x48\xbf", func_obj);
             push(point, "\x48\xb8",(void *) &do_call<F>);
             push(point, "\xff\xe0");
         } else {
-            int stack_size = BYTE * (args<Args ...>::INT - 5 + std::max(args<Args ...>::SSE - BYTE, 0));
+            
+            int stack_size = BYTE * (std::max(args<Args ...>::INT - 5, 0) + std::max(args<Args ...>::SSE - BYTE, 0));
+
+            //int stack_size = BYTE * (std::max(args<Args ...>::INT - 5, 0) + std::max(args<Args ...>::SSE - BYTE, 0));
 
             /* move r11 [rsp] save top of stack address */
 
@@ -197,8 +201,8 @@ struct trampoline<T(Args ...)> {
 
     trampoline(const trampoline &) = delete;
 
-    template<class TR>
-    trampoline &operator=(TR &&func) {
+    template<class R>
+    trampoline &operator=(R &&func) {
         trampoline tmp(std::move(func));
         ::swap(*this, tmp);
         return *this;
