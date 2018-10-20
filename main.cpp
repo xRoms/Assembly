@@ -62,8 +62,9 @@ void small_hard_test() {
         trampoline <float (int, double, int, float, float)>
         t([&] (int p0, double p1, int p2, float p3, float p4) { return (p1 + p2 + p3 + p4 + p0); });
         float res = 5.2;
-        assert (res == t.get()(1.0, 1.2, 1, 1, 1));
+        assert (res == t.get()(1.0, 1.2, 1, 1.0, 1));
         
+        std::cout << t.getint() << " " << t.getsse()  << std::endl;
         std::cout << "int double float test completed"  << std::endl;
     }
     {

@@ -50,13 +50,6 @@ void alloc() {
                      MAP_PRIVATE | MAP_ANONYMOUS,
                      -1, 0);
     p = (void **) mem;
-
-    for (auto i = 0; i < PAGE_SIZE * PAGES_AMOUNT; i += SIZE) {
-        auto c = (char *) mem + i;
-        *(void **) c = 0;
-        if (i != 0) {*(void **) (c - SIZE) = c;}
-    }
-
 }
 
 template<typename T>
@@ -108,9 +101,6 @@ struct trampoline<T(Args ...)> {
         deleter = free_temp<F>;
         if (p == nullptr) {
             alloc();
-            if (p == nullptr) {
-                code = nullptr;
-            }
         }
         code = p;
         p = (void **) *p;
@@ -207,6 +197,14 @@ struct trampoline<T(Args ...)> {
         return *this;
     }
 
+    int getint() {
+        return args<Args ...>::INT;
+    }
+
+    int getsse() {
+        return args<Args ...>::SSE;
+    }
+
     T (*get() const )(Args ... args) {
         return (T(*)(Args ... args)) code;
     }
@@ -245,3 +243,4 @@ void swap(trampoline<R(Args...)> &lhs, trampoline<R(Args...)> &rhs) {
 }
 
 #endif //ASM3_TRAMPOLINE_H
+
